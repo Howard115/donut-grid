@@ -1,33 +1,36 @@
-let cols = 10;
-let rows = 10;
+const cellNumber = 5;
+let cols = cellNumber;
+let rows = cellNumber;
 let cellSize;
 let currentSquare = 0;
+let donut;
 
 function setup() {
     let canvasSize = windowHeight * 0.9;
     let canvas = createCanvas(canvasSize, canvasSize);
     canvas.position((windowWidth - canvasSize) / 2, (windowHeight - canvasSize) / 2);
-    background(220);
-    cellSize = min(width / cols, height / rows);
-}
 
-function draw() {
-    background(220); // Clear the canvas each frame
-
-    for (let i = 0; i < cols; i++) {
-        for (let j = 0; j < rows; j++) {
-            let x = i * cellSize;
-            let y = j * cellSize;
-            stroke(0);
-            strokeWeight(1);
-            noFill();
-            rect(x, y, cellSize, cellSize);
+    // Create a gradient background
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            let inter = map(x + y, 0, width + height, 0, 1);
+            let c = lerpColor(color(255, 255, 100, 100), color(0, 0, 0, 100), inter);
+            stroke(c);
+            point(x, y);
         }
     }
 
+    cellSize = min(width / cols, height / rows);
+
+    // Initialize the donut at the center of the canvas
+    donut = new Donut(width / 2, height / 2);
+}
+
+function draw() {
     // Calculate the current square index based on frameCount
     let totalSquares = cols * rows;
-    currentSquare = floor((frameCount / 30) % totalSquares); // Switch every 0.5 seconds (60 frames per second * 0.5)
+    let period = 100; // Control period by a parameter
+    currentSquare = floor((frameCount / period) % totalSquares); // Switch based on the period
 
     // Calculate the row and column of the current square
     let currentCol = currentSquare % cols;
@@ -40,5 +43,10 @@ function draw() {
     // Draw the point
     fill(255, 0, 0); // Red color for the point
     noStroke();
-    ellipse(pointX, pointY, 10, 10); // Draw the point with a diameter of 10 pixels
+
+    // Update the donut's center position to the red point's position
+    donut.updateCenter(pointX, pointY);
+
+    // Draw the donut
+    donut.draw();
 }
