@@ -3,7 +3,7 @@ let cols = cellNumber;
 let rows = cellNumber;
 let cellSize;
 let currentSquare = 0;
-let donut;
+let donuts = [];
 
 function setup() {
     let canvasSize = windowHeight * 0.9;
@@ -22,8 +22,14 @@ function setup() {
 
     cellSize = min(width / cols, height / rows);
 
-    // Initialize the donut at the center of the canvas
-    donut = new Donut(width / 2, height / 2);
+    // Initialize 25 donuts, one for each cell
+    for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+            let x = col * cellSize + cellSize / 2;
+            let y = row * cellSize + cellSize / 2;
+            donuts.push(new Donut(x, y));
+        }
+    }
 }
 
 function draw() {
@@ -44,9 +50,6 @@ function draw() {
     fill(255, 0, 0); // Red color for the point
     noStroke();
 
-    // Update the donut's center position to the red point's position
-    donut.updateCenter(pointX, pointY);
-
-    // Draw the donut
-    donut.draw();
+    // Draw all donuts
+    donuts.forEach(donut => donut.draw());
 }
